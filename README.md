@@ -7,6 +7,7 @@ In some folders are pictures which i have already selected, sorted and so on, an
 As usually app is work in progres:
 1. Same pictures are ones which have same name, size and last modified date
 2. Preview works fine only with images
+3. Misc bugs..
 
 TODO: 
   1. Implement file hashing and comparasion by hash 
