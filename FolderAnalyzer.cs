@@ -141,17 +141,31 @@ namespace DuplicateDetector
             //TODO: implement async...
             while (_files.Count()>0)
             {
+                List<MyFile> fileGroup = new List<MyFile>();
                 MyFile file = _files[0];
+                
+                fileGroup.Add(file);
                 _files.Remove(file);
                  var duplicates = _files.Where(item => item.FileName == file.FileName && item.Size == file.Size &&  item.DateModified == file.DateModified).ToList<MyFile>();
                  if (duplicates.Count > 0)
                  {
                      _files.RemoveAll(item => item.FileName == file.FileName && item.Size == file.Size && item.DateModified == file.DateModified);
-                     file.SameFiles = duplicates;
-                     _processedFiles.Add(file);
-                     //Check if any file is in priority folder..
-
-
+                     fileGroup.AddRange(duplicates);
+                     var originalFile = fileGroup.Where(item => item.IsInPriorityFolder).FirstOrDefault();
+                     if (originalFile != null)
+                     {
+                         fileGroup.Remove(originalFile);
+                     }
+                     else
+                     {
+                         originalFile = fileGroup[0];
+                         fileGroup.Remove(originalFile);
+                     }
+                     if (fileGroup.Count > 0)
+                     {
+                         originalFile.SameFiles = fileGroup;
+                     }
+                     _processedFiles.Add(originalFile);
                  }
             }
           OnNotification(string.Format("Found {0} files with duplicates", _processedFiles.Count()));
@@ -176,6 +190,7 @@ namespace DuplicateDetector
                         if (!fi.Attributes.HasFlag(FileAttributes.System))
                         {
                             MyFile fileData = new MyFile(fi.Name, folder, fi.Length, fi.LastWriteTime);
+                            fileData.IsInPriorityFolder = PriorityFolders.Contains(fileData.Path);
                             _files.Add(fileData);
                         }
                     }

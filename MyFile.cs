@@ -14,6 +14,7 @@ namespace DuplicateDetector
         public long Size { get; set; }
         public DateTime DateModified { get; set; }
         public List<MyFile> SameFiles{ get; set; }
+        public bool IsInPriorityFolder{ get; set; }
 
         
         public MyFile (string fileName,string path,long size,DateTime dateModified)
@@ -39,4 +40,5 @@ namespace DuplicateDetector
 
     }
 }
+
 
