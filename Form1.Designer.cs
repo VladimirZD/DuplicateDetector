@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Node5");
             System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Node6");
             System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Node0", new System.Windows.Forms.TreeNode[] {
@@ -59,14 +60,26 @@
             this.textFolderToScan = new System.Windows.Forms.TextBox();
             this.lblFolderToScan = new System.Windows.Forms.Label();
             this.treeViewResult = new System.Windows.Forms.TreeView();
+            this.ctxTreeView = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.tlExpandAll = new System.Windows.Forms.ToolStripMenuItem();
+            this.tlColapseAll = new System.Windows.Forms.ToolStripMenuItem();
+            this.tlOpenFolder = new System.Windows.Forms.ToolStripMenuItem();
+            this.splitRight = new System.Windows.Forms.SplitContainer();
+            this.btnSelectFolderToMoveFiles = new System.Windows.Forms.Button();
+            this.textFolderForMoving = new System.Windows.Forms.TextBox();
+            this.radioDelete = new System.Windows.Forms.RadioButton();
+            this.radioMove = new System.Windows.Forms.RadioButton();
+            this.lblWhatToDoWithDuplicates = new System.Windows.Forms.Label();
             this.pctPreview = new System.Windows.Forms.PictureBox();
             this.lstLog = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.toolMenuBar = new System.Windows.Forms.ToolStrip();
             this.btnStartScan = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
+            this.btnDeleteFiles = new System.Windows.Forms.ToolStripButton();
+            this.btnMoveFiles = new System.Windows.Forms.ToolStripButton();
             this.selectFolderDialog = new System.Windows.Forms.FolderBrowserDialog();
+            this.tlOpenFile = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitHorizontal)).BeginInit();
             this.splitHorizontal.Panel1.SuspendLayout();
             this.splitHorizontal.Panel2.SuspendLayout();
@@ -79,6 +92,11 @@
             this.splitLeft.Panel1.SuspendLayout();
             this.splitLeft.Panel2.SuspendLayout();
             this.splitLeft.SuspendLayout();
+            this.ctxTreeView.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitRight)).BeginInit();
+            this.splitRight.Panel1.SuspendLayout();
+            this.splitRight.Panel2.SuspendLayout();
+            this.splitRight.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pctPreview)).BeginInit();
             this.toolMenuBar.SuspendLayout();
             this.SuspendLayout();
@@ -99,8 +117,8 @@
             // splitHorizontal.Panel2
             // 
             this.splitHorizontal.Panel2.Controls.Add(this.lstLog);
-            this.splitHorizontal.Size = new System.Drawing.Size(1271, 723);
-            this.splitHorizontal.SplitterDistance = 617;
+            this.splitHorizontal.Size = new System.Drawing.Size(1568, 746);
+            this.splitHorizontal.SplitterDistance = 636;
             this.splitHorizontal.TabIndex = 3;
             // 
             // splitVertical
@@ -115,9 +133,9 @@
             // 
             // splitVertical.Panel2
             // 
-            this.splitVertical.Panel2.Controls.Add(this.pctPreview);
-            this.splitVertical.Size = new System.Drawing.Size(1271, 617);
-            this.splitVertical.SplitterDistance = 600;
+            this.splitVertical.Panel2.Controls.Add(this.splitRight);
+            this.splitVertical.Size = new System.Drawing.Size(1568, 636);
+            this.splitVertical.SplitterDistance = 740;
             this.splitVertical.TabIndex = 0;
             // 
             // splitLeft
@@ -142,7 +160,7 @@
             // 
             this.splitLeft.Panel2.Controls.Add(this.treeViewResult);
             this.splitLeft.Panel2MinSize = 250;
-            this.splitLeft.Size = new System.Drawing.Size(600, 617);
+            this.splitLeft.Size = new System.Drawing.Size(740, 636);
             this.splitLeft.SplitterDistance = 208;
             this.splitLeft.TabIndex = 1;
             // 
@@ -180,7 +198,7 @@
             this.path});
             this.lstPriorityFolders.Location = new System.Drawing.Point(3, 85);
             this.lstPriorityFolders.Name = "lstPriorityFolders";
-            this.lstPriorityFolders.Size = new System.Drawing.Size(593, 109);
+            this.lstPriorityFolders.Size = new System.Drawing.Size(733, 109);
             this.lstPriorityFolders.TabIndex = 4;
             this.lstPriorityFolders.UseCompatibleStateImageBehavior = false;
             this.lstPriorityFolders.View = System.Windows.Forms.View.Details;
@@ -206,7 +224,7 @@
             this.btnSelectFolderToScan.AutoSize = true;
             this.btnSelectFolderToScan.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSelectFolderToScan.Image = global::DuplicateDetector.Properties.Resources.Folder;
-            this.btnSelectFolderToScan.Location = new System.Drawing.Point(557, 6);
+            this.btnSelectFolderToScan.Location = new System.Drawing.Point(697, 6);
             this.btnSelectFolderToScan.Name = "btnSelectFolderToScan";
             this.btnSelectFolderToScan.Size = new System.Drawing.Size(40, 40);
             this.btnSelectFolderToScan.TabIndex = 2;
@@ -221,7 +239,7 @@
             this.textFolderToScan.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textFolderToScan.Location = new System.Drawing.Point(85, 17);
             this.textFolderToScan.Name = "textFolderToScan";
-            this.textFolderToScan.Size = new System.Drawing.Size(466, 20);
+            this.textFolderToScan.Size = new System.Drawing.Size(606, 20);
             this.textFolderToScan.TabIndex = 1;
             // 
             // lblFolderToScan
@@ -236,6 +254,7 @@
             // treeViewResult
             // 
             this.treeViewResult.CheckBoxes = true;
+            this.treeViewResult.ContextMenuStrip = this.ctxTreeView;
             this.treeViewResult.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeViewResult.FullRowSelect = true;
             this.treeViewResult.Location = new System.Drawing.Point(0, 0);
@@ -267,18 +286,130 @@
             treeNode4,
             treeNode7,
             treeNode11});
-            this.treeViewResult.Size = new System.Drawing.Size(600, 405);
+            this.treeViewResult.Size = new System.Drawing.Size(740, 424);
             this.treeViewResult.TabIndex = 1;
             this.treeViewResult.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeViewResult_AfterSelect);
+            this.treeViewResult.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeViewResult_NodeMouseClick);
+            // 
+            // ctxTreeView
+            // 
+            this.ctxTreeView.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tlExpandAll,
+            this.tlColapseAll,
+            this.tlOpenFolder,
+            this.tlOpenFile});
+            this.ctxTreeView.Name = "ctxTreeView";
+            this.ctxTreeView.Size = new System.Drawing.Size(138, 92);
+            // 
+            // tlExpandAll
+            // 
+            this.tlExpandAll.Name = "tlExpandAll";
+            this.tlExpandAll.Size = new System.Drawing.Size(137, 22);
+            this.tlExpandAll.Text = "Expand all ";
+            this.tlExpandAll.Click += new System.EventHandler(this.tlExpandAll_Click);
+            // 
+            // tlColapseAll
+            // 
+            this.tlColapseAll.Name = "tlColapseAll";
+            this.tlColapseAll.Size = new System.Drawing.Size(137, 22);
+            this.tlColapseAll.Text = "Collapse all";
+            this.tlColapseAll.Click += new System.EventHandler(this.tlColapseAll_Click);
+            // 
+            // tlOpenFolder
+            // 
+            this.tlOpenFolder.Name = "tlOpenFolder";
+            this.tlOpenFolder.Size = new System.Drawing.Size(137, 22);
+            this.tlOpenFolder.Text = "Open folder";
+            this.tlOpenFolder.Click += new System.EventHandler(this.tlOpenFolder_Click);
+            // 
+            // splitRight
+            // 
+            this.splitRight.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitRight.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this.splitRight.IsSplitterFixed = true;
+            this.splitRight.Location = new System.Drawing.Point(0, 0);
+            this.splitRight.Name = "splitRight";
+            this.splitRight.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitRight.Panel1
+            // 
+            this.splitRight.Panel1.Controls.Add(this.btnSelectFolderToMoveFiles);
+            this.splitRight.Panel1.Controls.Add(this.textFolderForMoving);
+            this.splitRight.Panel1.Controls.Add(this.radioDelete);
+            this.splitRight.Panel1.Controls.Add(this.radioMove);
+            this.splitRight.Panel1.Controls.Add(this.lblWhatToDoWithDuplicates);
+            // 
+            // splitRight.Panel2
+            // 
+            this.splitRight.Panel2.Controls.Add(this.pctPreview);
+            this.splitRight.Size = new System.Drawing.Size(824, 636);
+            this.splitRight.SplitterDistance = 208;
+            this.splitRight.TabIndex = 1;
+            // 
+            // btnSelectFolderToMoveFiles
+            // 
+            this.btnSelectFolderToMoveFiles.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSelectFolderToMoveFiles.AutoSize = true;
+            this.btnSelectFolderToMoveFiles.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnSelectFolderToMoveFiles.Image = global::DuplicateDetector.Properties.Resources.Folder;
+            this.btnSelectFolderToMoveFiles.Location = new System.Drawing.Point(771, 126);
+            this.btnSelectFolderToMoveFiles.Name = "btnSelectFolderToMoveFiles";
+            this.btnSelectFolderToMoveFiles.Size = new System.Drawing.Size(40, 40);
+            this.btnSelectFolderToMoveFiles.TabIndex = 7;
+            this.btnSelectFolderToMoveFiles.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.btnSelectFolderToMoveFiles.UseVisualStyleBackColor = true;
+            this.btnSelectFolderToMoveFiles.Click += new System.EventHandler(this.btnSelectFolderToMoveFiles_Click);
+            // 
+            // textFolderForMoving
+            // 
+            this.textFolderForMoving.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textFolderForMoving.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textFolderForMoving.Location = new System.Drawing.Point(250, 133);
+            this.textFolderForMoving.Name = "textFolderForMoving";
+            this.textFolderForMoving.Size = new System.Drawing.Size(515, 20);
+            this.textFolderForMoving.TabIndex = 7;
+            // 
+            // radioDelete
+            // 
+            this.radioDelete.AutoSize = true;
+            this.radioDelete.Location = new System.Drawing.Point(158, 162);
+            this.radioDelete.Name = "radioDelete";
+            this.radioDelete.Size = new System.Drawing.Size(56, 17);
+            this.radioDelete.TabIndex = 3;
+            this.radioDelete.Text = "Delete";
+            this.radioDelete.UseVisualStyleBackColor = true;
+            // 
+            // radioMove
+            // 
+            this.radioMove.AutoSize = true;
+            this.radioMove.Checked = true;
+            this.radioMove.Location = new System.Drawing.Point(157, 135);
+            this.radioMove.Name = "radioMove";
+            this.radioMove.Size = new System.Drawing.Size(93, 17);
+            this.radioMove.TabIndex = 2;
+            this.radioMove.TabStop = true;
+            this.radioMove.Text = "Move to folder";
+            this.radioMove.UseVisualStyleBackColor = true;
+            this.radioMove.CheckedChanged += new System.EventHandler(this.radioMove_CheckedChanged);
+            // 
+            // lblWhatToDoWithDuplicates
+            // 
+            this.lblWhatToDoWithDuplicates.AutoSize = true;
+            this.lblWhatToDoWithDuplicates.Location = new System.Drawing.Point(6, 137);
+            this.lblWhatToDoWithDuplicates.Name = "lblWhatToDoWithDuplicates";
+            this.lblWhatToDoWithDuplicates.Size = new System.Drawing.Size(152, 13);
+            this.lblWhatToDoWithDuplicates.TabIndex = 1;
+            this.lblWhatToDoWithDuplicates.Text = "What to do with selected files: ";
             // 
             // pctPreview
             // 
             this.pctPreview.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pctPreview.Location = new System.Drawing.Point(0, 0);
             this.pctPreview.Name = "pctPreview";
-            this.pctPreview.Size = new System.Drawing.Size(667, 617);
+            this.pctPreview.Size = new System.Drawing.Size(824, 424);
             this.pctPreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pctPreview.TabIndex = 0;
+            this.pctPreview.TabIndex = 1;
             this.pctPreview.TabStop = false;
             this.pctPreview.WaitOnLoad = true;
             // 
@@ -291,7 +422,7 @@
             this.lstLog.FullRowSelect = true;
             this.lstLog.Location = new System.Drawing.Point(0, 0);
             this.lstLog.Name = "lstLog";
-            this.lstLog.Size = new System.Drawing.Size(1271, 102);
+            this.lstLog.Size = new System.Drawing.Size(1568, 106);
             this.lstLog.TabIndex = 1;
             this.lstLog.UseCompatibleStateImageBehavior = false;
             this.lstLog.View = System.Windows.Forms.View.Details;
@@ -305,11 +436,12 @@
             this.toolMenuBar.ImageScalingSize = new System.Drawing.Size(32, 32);
             this.toolMenuBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnStartScan,
-            this.toolStripButton3});
+            this.btnDeleteFiles,
+            this.btnMoveFiles});
             this.toolMenuBar.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
             this.toolMenuBar.Location = new System.Drawing.Point(0, 0);
             this.toolMenuBar.Name = "toolMenuBar";
-            this.toolMenuBar.Size = new System.Drawing.Size(1271, 39);
+            this.toolMenuBar.Size = new System.Drawing.Size(1568, 39);
             this.toolMenuBar.Stretch = true;
             this.toolMenuBar.TabIndex = 5;
             this.toolMenuBar.Text = "toolStrip1";
@@ -321,29 +453,47 @@
             this.btnStartScan.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnStartScan.Name = "btnStartScan";
             this.btnStartScan.Size = new System.Drawing.Size(36, 36);
-            this.btnStartScan.Text = "toolStripButton4";
+            this.btnStartScan.Text = "Scan";
             this.btnStartScan.ToolTipText = "Start scan";
             this.btnStartScan.Click += new System.EventHandler(this.btnStartScan_Click);
             // 
-            // toolStripButton3
+            // btnDeleteFiles
             // 
-            this.toolStripButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton3.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton3.Image")));
-            this.toolStripButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton3.Name = "toolStripButton3";
-            this.toolStripButton3.Size = new System.Drawing.Size(36, 36);
-            this.toolStripButton3.Text = "toolStripButton3";
+            this.btnDeleteFiles.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnDeleteFiles.Image = global::DuplicateDetector.Properties.Resources.delete2;
+            this.btnDeleteFiles.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnDeleteFiles.Name = "btnDeleteFiles";
+            this.btnDeleteFiles.Size = new System.Drawing.Size(36, 36);
+            this.btnDeleteFiles.Text = "Delete";
+            this.btnDeleteFiles.ToolTipText = "Delete duplicate files";
+            // 
+            // btnMoveFiles
+            // 
+            this.btnMoveFiles.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnMoveFiles.Image = global::DuplicateDetector.Properties.Resources.move_to;
+            this.btnMoveFiles.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnMoveFiles.Name = "btnMoveFiles";
+            this.btnMoveFiles.Size = new System.Drawing.Size(36, 36);
+            this.btnMoveFiles.Text = "Move";
+            this.btnMoveFiles.ToolTipText = "Move duplicate files";
             // 
             // selectFolderDialog
             // 
             this.selectFolderDialog.ShowNewFolderButton = false;
+            // 
+            // tlOpenFile
+            // 
+            this.tlOpenFile.Name = "tlOpenFile";
+            this.tlOpenFile.Size = new System.Drawing.Size(137, 22);
+            this.tlOpenFile.Text = "Open file";
+            this.tlOpenFile.Click += new System.EventHandler(this.tlOpenFile_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.WhiteSmoke;
-            this.ClientSize = new System.Drawing.Size(1271, 766);
+            this.ClientSize = new System.Drawing.Size(1568, 789);
             this.Controls.Add(this.toolMenuBar);
             this.Controls.Add(this.splitHorizontal);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -363,6 +513,12 @@
             this.splitLeft.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitLeft)).EndInit();
             this.splitLeft.ResumeLayout(false);
+            this.ctxTreeView.ResumeLayout(false);
+            this.splitRight.Panel1.ResumeLayout(false);
+            this.splitRight.Panel1.PerformLayout();
+            this.splitRight.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitRight)).EndInit();
+            this.splitRight.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pctPreview)).EndInit();
             this.toolMenuBar.ResumeLayout(false);
             this.toolMenuBar.PerformLayout();
@@ -378,9 +534,8 @@
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.SplitContainer splitVertical;
-        private System.Windows.Forms.PictureBox pctPreview;
         private System.Windows.Forms.ToolStrip toolMenuBar;
-        private System.Windows.Forms.ToolStripButton toolStripButton3;
+        private System.Windows.Forms.ToolStripButton btnDeleteFiles;
         private System.Windows.Forms.ToolStripButton btnStartScan;
         private System.Windows.Forms.SplitContainer splitLeft;
         private System.Windows.Forms.TreeView treeViewResult;
@@ -393,6 +548,19 @@
         private System.Windows.Forms.Button btnAddPriorityItem;
         private System.Windows.Forms.ListView lstPriorityFolders;
         private System.Windows.Forms.ColumnHeader path;
+        private System.Windows.Forms.SplitContainer splitRight;
+        private System.Windows.Forms.PictureBox pctPreview;
+        private System.Windows.Forms.Label lblWhatToDoWithDuplicates;
+        private System.Windows.Forms.ToolStripButton btnMoveFiles;
+        private System.Windows.Forms.Button btnSelectFolderToMoveFiles;
+        private System.Windows.Forms.TextBox textFolderForMoving;
+        private System.Windows.Forms.RadioButton radioDelete;
+        private System.Windows.Forms.RadioButton radioMove;
+        private System.Windows.Forms.ContextMenuStrip ctxTreeView;
+        private System.Windows.Forms.ToolStripMenuItem tlExpandAll;
+        private System.Windows.Forms.ToolStripMenuItem tlColapseAll;
+        private System.Windows.Forms.ToolStripMenuItem tlOpenFolder;
+        private System.Windows.Forms.ToolStripMenuItem tlOpenFile;
     }
 }
 

@@ -25,6 +25,10 @@ namespace DuplicateDetector
             this.DateModified = dateModified;
         }
 
+        public string GetFullPath()
+        {
+            return string.Format(@"{0}\{1}",this.Path,this.FileName);
+        }
 
 
         //public int Compare(object x, object y)

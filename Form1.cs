@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Collections.Specialized;
 using System.IO;
+using System.Diagnostics;
 
 namespace DuplicateDetector
 {
@@ -25,7 +26,7 @@ namespace DuplicateDetector
             LoadSettings();
             RefreshPriorityItemsButtons();
             InitAnalyzer();
-
+            UpdateToolbar();
             LogEvent("Program started");
         }
 
@@ -75,6 +76,16 @@ namespace DuplicateDetector
             {
                 textFolderToScan.Text=DuplicateDetector.Properties.Settings.Default.FolderToScan;
             }
+
+            if (!string.IsNullOrEmpty(DuplicateDetector.Properties.Settings.Default.FolderForMoving))
+            {
+                textFolderForMoving.Text = DuplicateDetector.Properties.Settings.Default.FolderForMoving;
+            }
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.SelectedFilesAction))
+            {
+                radioDelete.Checked =  (Properties.Settings.Default.SelectedFilesAction == "D") ? true : false;
+                radioMove.Checked = (Properties.Settings.Default.SelectedFilesAction == "M") ? true : false;
+            }
             if (!(DuplicateDetector.Properties.Settings.Default.PriorityFolders==null))
             {
                 var items = DuplicateDetector.Properties.Settings.Default.PriorityFolders;
@@ -88,6 +99,8 @@ namespace DuplicateDetector
         private void SaveSettings()
         {
             Properties.Settings.Default.FolderToScan = textFolderToScan.Text;
+            Properties.Settings.Default.FolderForMoving = textFolderForMoving.Text;
+            Properties.Settings.Default.SelectedFilesAction = (radioDelete.Checked) ? "D" : "M";
             StringCollection priorityFolders = new StringCollection();
             foreach (ListViewItem item in lstPriorityFolders.Items)
             {
@@ -168,7 +181,9 @@ namespace DuplicateDetector
 
             if (!_analyzer.IsRunning)
             {
+                
                 SaveSettings();
+                treeViewResult.Nodes.Clear();
                 btnStartScan.Image = DuplicateDetector.Properties.Resources.media_stop_red;
                 btnStartScan.ToolTipText = "Stop scan";
                 Application.DoEvents();
@@ -189,10 +204,12 @@ namespace DuplicateDetector
             var items = _analyzer.GetResult();
             foreach (var item in items)
             {
-                TreeNode fileNode =  treeViewResult.Nodes.Add(item.Path + @"\" + item.FileName);
+                TreeNode fileNode =  treeViewResult.Nodes.Add(item.GetFullPath()+string.Format("------{0} duplicates",item.SameFiles.Count()));
+                fileNode.Tag = item.GetFullPath();
                 foreach (var sameFile in item.SameFiles)
                 {
-                    TreeNode sameFileNode=fileNode.Nodes.Add(sameFile.Path + @"\" + sameFile.FileName);
+                    TreeNode sameFileNode = fileNode.Nodes.Add(sameFile.GetFullPath());
+                    sameFileNode.Tag = sameFile.GetFullPath();
                     sameFileNode.Checked = true;
                 }
 
@@ -201,7 +218,7 @@ namespace DuplicateDetector
 
         private void treeViewResult_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            string fileName = e.Node.Text;
+            string fileName = e.Node.Tag.ToString();
             if (IsImageFile(fileName))
             {
                 pctPreview.Image = Image.FromFile(fileName);
@@ -212,14 +229,69 @@ namespace DuplicateDetector
             }
         }
 
-
-        
-
         private bool IsImageFile(string fileName)
         {
             return ImageExtensions.Contains(Path.GetExtension(fileName).ToUpperInvariant());
         }
+
+        private void btnSelectFolderToMoveFiles_Click(object sender, EventArgs e)
+        {
+            bool oldSelectNewFolderValue = selectFolderDialog.ShowNewFolderButton;
+            selectFolderDialog.ShowNewFolderButton = true;
+            if (selectFolderDialog.ShowDialog() == DialogResult.OK)
+            {
+                textFolderForMoving.Text = selectFolderDialog.SelectedPath;
+            }
+            selectFolderDialog.ShowNewFolderButton = oldSelectNewFolderValue;
+        }
+
+        private void tlExpandAll_Click(object sender, EventArgs e)
+        {
+            treeViewResult.ExpandAll();
+        }
+
+        private void tlColapseAll_Click(object sender, EventArgs e)
+        {
+            treeViewResult.CollapseAll();
+        }
+
+        private void radioMove_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateToolbar();
+        }
+
+        private void UpdateToolbar()
+        {
+            btnDeleteFiles.Visible = !radioMove.Checked;
+            btnMoveFiles.Visible = radioMove.Checked;
+        }
+
+        private void tlOpenFolder_Click(object sender, EventArgs e)
+        {
+            string path = new FileInfo(treeViewResult.SelectedNode.Tag.ToString()).DirectoryName;
+            if (Directory.Exists(path));
+            {
+                Process.Start(path);
+            }
+        }
+
+        private void treeViewResult_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            treeViewResult.SelectedNode = e.Node;
+        }
+
+        private void tlOpenFile_Click(object sender, EventArgs e)
+        {
+            
+            if (File.Exists(treeViewResult.SelectedNode.Tag.ToString()));
+            {
+                Process.Start(treeViewResult.SelectedNode.Tag.ToString());
+            }
+        }
+
+        
     }
 }
+
 
 

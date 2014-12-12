@@ -45,5 +45,29 @@ namespace DuplicateDetector.Properties {
                 this["PriorityFolders"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string FolderForMoving {
+            get {
+                return ((string)(this["FolderForMoving"]));
+            }
+            set {
+                this["FolderForMoving"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SelectedFilesAction {
+            get {
+                return ((string)(this["SelectedFilesAction"]));
+            }
+            set {
+                this["SelectedFilesAction"] = value;
+            }
+        }
     }
 }

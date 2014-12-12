@@ -84,6 +84,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="README.md" />
     <None Include="Resources\media_play_green.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -91,6 +92,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="magician.ico" />
+    <None Include="Resources\move to.ico" />
+    <None Include="Resources\delete2.ico" />
     <None Include="Resources\folder_delete.ico" />
     <None Include="Resources\Folder.ico" />
     <None Include="Resources\folder_add.ico" />

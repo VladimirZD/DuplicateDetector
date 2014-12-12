@@ -30,6 +30,7 @@ namespace DuplicateDetector
 
         private List<MyFile> _files;
         private List<MyFile> _processedFiles = new List<MyFile>();
+        
 
         public FolderAnalyzer ()
         {
@@ -74,7 +75,7 @@ namespace DuplicateDetector
 
         private void OnNotification(string message,EventType type=EventType.Message)
         {
-            //ako je  error i nitko ne sluša exception
+            //error and no listeners
             if (Notification != null)
             {
                 Notification(message,type);
@@ -91,6 +92,7 @@ namespace DuplicateDetector
         
         public bool StartScan(string folder,StringCollection priorityFolders)
         {
+            DateTime startTime = DateTime.Now;
             bool retValue = false;
             this.FolderToScan = folder;
             this.PriorityFolders = priorityFolders;
@@ -110,6 +112,8 @@ namespace DuplicateDetector
             {
                 OnNotification("Validation failed",EventType.Error);
             }
+            TimeSpan duration = DateTime.Now - startTime;
+            OnNotification(string.Format("Scan duration {0} hours {1} minutes {2} seconds", duration.Hours, duration.Minutes, duration.Seconds));
             OnScanFinished(retValue);
             return retValue;
         }
@@ -139,6 +143,7 @@ namespace DuplicateDetector
         private void AnalyzeFiles()
         {
             //TODO: implement async...
+            OnNotification(string.Format("File compare started! {0} files to process", _files.Count));
             while (_files.Count()>0)
             {
                 List<MyFile> fileGroup = new List<MyFile>();
@@ -146,21 +151,18 @@ namespace DuplicateDetector
                 
                 fileGroup.Add(file);
                 _files.Remove(file);
+                MyFile originalFile;
                  var duplicates = _files.Where(item => item.FileName == file.FileName && item.Size == file.Size &&  item.DateModified == file.DateModified).ToList<MyFile>();
                  if (duplicates.Count > 0)
                  {
                      _files.RemoveAll(item => item.FileName == file.FileName && item.Size == file.Size && item.DateModified == file.DateModified);
                      fileGroup.AddRange(duplicates);
-                     var originalFile = fileGroup.Where(item => item.IsInPriorityFolder).FirstOrDefault();
-                     if (originalFile != null)
+                     originalFile = fileGroup.Where(item => item.IsInPriorityFolder).FirstOrDefault();
+                     if (originalFile == null)
                      {
-                         fileGroup.Remove(originalFile);
+                         originalFile = fileGroup.OrderByDescending(item => item.DateModified).FirstOrDefault();
                      }
-                     else
-                     {
-                         originalFile = fileGroup[0];
-                         fileGroup.Remove(originalFile);
-                     }
+                     fileGroup.Remove(originalFile);
                      if (fileGroup.Count > 0)
                      {
                          originalFile.SameFiles = fileGroup;
