@@ -13,36 +13,37 @@ namespace DuplicateDetector
         public string Path { get; set; }
         public long Size { get; set; }
         public DateTime DateModified { get; set; }
-        public List<MyFile> SameFiles{ get; set; }
-        public bool IsInPriorityFolder{ get; set; }
+        public List<MyFile> SameFiles { get; set; }
+        public bool IsInLowPriorityFolder { get; set; }
 
-        
-        public MyFile (string fileName,string path,long size,DateTime dateModified)
+
+        public MyFile(string fileName, string path, long size, DateTime dateModified, bool isInLowPriorityFolder)
         {
             this.FileName = fileName;
             this.Path = path;
             this.Size = size;
             this.DateModified = dateModified;
+            this.IsInLowPriorityFolder = isInLowPriorityFolder;
         }
 
         public string GetFullPath()
         {
-            return string.Format(@"{0}\{1}",this.Path,this.FileName);
+            return string.Format(@"{0}\{1}", this.Path, this.FileName);
         }
 
 
-        //public int Compare(object x, object y)
+        //    Calculate MD5
+        //      using (var md5 = MD5.Create())
         //{
-            
-        //    int retValue = 0;
-        //    MyFile f1 = (MyFile)x;
-        //    MyFile f2 = (MyFile)y;
-
-        //    retValue = f1.FileName.CompareTo(f2.FileName);
-        //    return retValue;
+        //using (var stream = File.OpenRead(filename))
+        //{
+        //    return md5.ComputeHash(stream);
+        //     *return  BitConverter.ToString(md5.ComputeHash(stream)).Replace("-","").ToLower();
         //}
 
     }
+
 }
+
 
 

@@ -1,6 +1,6 @@
 ﻿namespace DuplicateDetector
 {
-    partial class Form1
+    partial class frmMain
     {
         /// <summary>
         /// Required designer variable.
@@ -47,7 +47,7 @@
             treeNode8,
             treeNode9,
             treeNode10});
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
             this.splitHorizontal = new System.Windows.Forms.SplitContainer();
             this.splitVertical = new System.Windows.Forms.SplitContainer();
             this.splitLeft = new System.Windows.Forms.SplitContainer();
@@ -64,6 +64,7 @@
             this.tlExpandAll = new System.Windows.Forms.ToolStripMenuItem();
             this.tlColapseAll = new System.Windows.Forms.ToolStripMenuItem();
             this.tlOpenFolder = new System.Windows.Forms.ToolStripMenuItem();
+            this.tlOpenFile = new System.Windows.Forms.ToolStripMenuItem();
             this.splitRight = new System.Windows.Forms.SplitContainer();
             this.btnSelectFolderToMoveFiles = new System.Windows.Forms.Button();
             this.textFolderForMoving = new System.Windows.Forms.TextBox();
@@ -79,7 +80,8 @@
             this.btnDeleteFiles = new System.Windows.Forms.ToolStripButton();
             this.btnMoveFiles = new System.Windows.Forms.ToolStripButton();
             this.selectFolderDialog = new System.Windows.Forms.FolderBrowserDialog();
-            this.tlOpenFile = new System.Windows.Forms.ToolStripMenuItem();
+            this.tlMove = new System.Windows.Forms.ToolStripMenuItem();
+            this.tlDelete = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitHorizontal)).BeginInit();
             this.splitHorizontal.Panel1.SuspendLayout();
             this.splitHorizontal.Panel2.SuspendLayout();
@@ -196,9 +198,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lstPriorityFolders.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.path});
-            this.lstPriorityFolders.Location = new System.Drawing.Point(3, 85);
+            this.lstPriorityFolders.Location = new System.Drawing.Point(0, 85);
             this.lstPriorityFolders.Name = "lstPriorityFolders";
-            this.lstPriorityFolders.Size = new System.Drawing.Size(733, 109);
+            this.lstPriorityFolders.Size = new System.Drawing.Size(740, 120);
             this.lstPriorityFolders.TabIndex = 4;
             this.lstPriorityFolders.UseCompatibleStateImageBehavior = false;
             this.lstPriorityFolders.View = System.Windows.Forms.View.Details;
@@ -213,9 +215,9 @@
             this.lblPriorityFolderLocations.AutoSize = true;
             this.lblPriorityFolderLocations.Location = new System.Drawing.Point(6, 53);
             this.lblPriorityFolderLocations.Name = "lblPriorityFolderLocations";
-            this.lblPriorityFolderLocations.Size = new System.Drawing.Size(439, 13);
+            this.lblPriorityFolderLocations.Size = new System.Drawing.Size(444, 13);
             this.lblPriorityFolderLocations.TabIndex = 3;
-            this.lblPriorityFolderLocations.Text = "Priority folders (if duplicate images found copies in this folder will not be sel" +
+            this.lblPriorityFolderLocations.Text = "Low Priority folders (if duplicate images found copies in this folder will be sel" +
     "ected for removal)";
             // 
             // btnSelectFolderToScan
@@ -297,30 +299,39 @@
             this.tlExpandAll,
             this.tlColapseAll,
             this.tlOpenFolder,
-            this.tlOpenFile});
+            this.tlOpenFile,
+            this.tlMove,
+            this.tlDelete});
             this.ctxTreeView.Name = "ctxTreeView";
-            this.ctxTreeView.Size = new System.Drawing.Size(138, 92);
+            this.ctxTreeView.Size = new System.Drawing.Size(153, 158);
             // 
             // tlExpandAll
             // 
             this.tlExpandAll.Name = "tlExpandAll";
-            this.tlExpandAll.Size = new System.Drawing.Size(137, 22);
+            this.tlExpandAll.Size = new System.Drawing.Size(152, 22);
             this.tlExpandAll.Text = "Expand all ";
             this.tlExpandAll.Click += new System.EventHandler(this.tlExpandAll_Click);
             // 
             // tlColapseAll
             // 
             this.tlColapseAll.Name = "tlColapseAll";
-            this.tlColapseAll.Size = new System.Drawing.Size(137, 22);
+            this.tlColapseAll.Size = new System.Drawing.Size(152, 22);
             this.tlColapseAll.Text = "Collapse all";
             this.tlColapseAll.Click += new System.EventHandler(this.tlColapseAll_Click);
             // 
             // tlOpenFolder
             // 
             this.tlOpenFolder.Name = "tlOpenFolder";
-            this.tlOpenFolder.Size = new System.Drawing.Size(137, 22);
+            this.tlOpenFolder.Size = new System.Drawing.Size(152, 22);
             this.tlOpenFolder.Text = "Open folder";
             this.tlOpenFolder.Click += new System.EventHandler(this.tlOpenFolder_Click);
+            // 
+            // tlOpenFile
+            // 
+            this.tlOpenFile.Name = "tlOpenFile";
+            this.tlOpenFile.Size = new System.Drawing.Size(152, 22);
+            this.tlOpenFile.Text = "Open file";
+            this.tlOpenFile.Click += new System.EventHandler(this.tlOpenFile_Click);
             // 
             // splitRight
             // 
@@ -352,7 +363,7 @@
             this.btnSelectFolderToMoveFiles.AutoSize = true;
             this.btnSelectFolderToMoveFiles.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSelectFolderToMoveFiles.Image = global::DuplicateDetector.Properties.Resources.Folder;
-            this.btnSelectFolderToMoveFiles.Location = new System.Drawing.Point(771, 126);
+            this.btnSelectFolderToMoveFiles.Location = new System.Drawing.Point(771, 124);
             this.btnSelectFolderToMoveFiles.Name = "btnSelectFolderToMoveFiles";
             this.btnSelectFolderToMoveFiles.Size = new System.Drawing.Size(40, 40);
             this.btnSelectFolderToMoveFiles.TabIndex = 7;
@@ -476,19 +487,27 @@
             this.btnMoveFiles.Size = new System.Drawing.Size(36, 36);
             this.btnMoveFiles.Text = "Move";
             this.btnMoveFiles.ToolTipText = "Move duplicate files";
+            this.btnMoveFiles.Click += new System.EventHandler(this.btnMoveFiles_Click);
             // 
             // selectFolderDialog
             // 
             this.selectFolderDialog.ShowNewFolderButton = false;
             // 
-            // tlOpenFile
+            // tlMove
             // 
-            this.tlOpenFile.Name = "tlOpenFile";
-            this.tlOpenFile.Size = new System.Drawing.Size(137, 22);
-            this.tlOpenFile.Text = "Open file";
-            this.tlOpenFile.Click += new System.EventHandler(this.tlOpenFile_Click);
+            this.tlMove.Name = "tlMove";
+            this.tlMove.Size = new System.Drawing.Size(152, 22);
+            this.tlMove.Text = "Move ";
+            this.tlMove.Click += new System.EventHandler(this.tlMove_Click);
             // 
-            // Form1
+            // tlDelete
+            // 
+            this.tlDelete.Name = "tlDelete";
+            this.tlDelete.Size = new System.Drawing.Size(152, 22);
+            this.tlDelete.Text = "Delete";
+            this.tlDelete.Click += new System.EventHandler(this.tlDelete_Click);
+            // 
+            // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -497,8 +516,8 @@
             this.Controls.Add(this.toolMenuBar);
             this.Controls.Add(this.splitHorizontal);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "Form1";
-            this.Text = "Form1";
+            this.Name = "frmMain";
+            this.Text = "Duplicate detector";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.splitHorizontal.Panel1.ResumeLayout(false);
             this.splitHorizontal.Panel2.ResumeLayout(false);
@@ -561,6 +580,8 @@
         private System.Windows.Forms.ToolStripMenuItem tlColapseAll;
         private System.Windows.Forms.ToolStripMenuItem tlOpenFolder;
         private System.Windows.Forms.ToolStripMenuItem tlOpenFile;
+        private System.Windows.Forms.ToolStripMenuItem tlMove;
+        private System.Windows.Forms.ToolStripMenuItem tlDelete;
     }
 }
 

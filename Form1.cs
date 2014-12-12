@@ -13,12 +13,12 @@ using System.Diagnostics;
 
 namespace DuplicateDetector
 {
-    public partial class Form1 : Form
+    public partial class frmMain : Form
     {
         private FolderAnalyzer _analyzer = null;
         public static readonly List<string> ImageExtensions = new List<string> { ".JPG", ".JPE", ".BMP", ".GIF", ".PNG" };
 
-        public Form1()
+        public frmMain()
         {
             InitializeComponent();
             InitLog();
@@ -41,12 +41,12 @@ namespace DuplicateDetector
 
         void _analyzer_Notification(string message, EventType type)
         {
-            LogEvent(message,type);
+            LogEvent(message, type);
         }
 
         void _analyzer_ScanFinished(bool succes)
         {
-            
+
             if (succes)
             {
                 LogEvent("Scan finished");
@@ -54,7 +54,7 @@ namespace DuplicateDetector
             }
             else
             {
-                LogEvent("Scan failed",EventType.Warring);
+                LogEvent("Scan failed", EventType.Warring);
             }
         }
 
@@ -67,14 +67,14 @@ namespace DuplicateDetector
         private void _analyzer_ScanStarted()
         {
             LogEvent("Scan started");
-            
+
         }
 
         private void LoadSettings()
         {
             if (!string.IsNullOrEmpty(DuplicateDetector.Properties.Settings.Default.FolderToScan))
             {
-                textFolderToScan.Text=DuplicateDetector.Properties.Settings.Default.FolderToScan;
+                textFolderToScan.Text = DuplicateDetector.Properties.Settings.Default.FolderToScan;
             }
 
             if (!string.IsNullOrEmpty(DuplicateDetector.Properties.Settings.Default.FolderForMoving))
@@ -83,13 +83,13 @@ namespace DuplicateDetector
             }
             if (!string.IsNullOrEmpty(Properties.Settings.Default.SelectedFilesAction))
             {
-                radioDelete.Checked =  (Properties.Settings.Default.SelectedFilesAction == "D") ? true : false;
+                radioDelete.Checked = (Properties.Settings.Default.SelectedFilesAction == "D") ? true : false;
                 radioMove.Checked = (Properties.Settings.Default.SelectedFilesAction == "M") ? true : false;
             }
-            if (!(DuplicateDetector.Properties.Settings.Default.PriorityFolders==null))
+            if (!(DuplicateDetector.Properties.Settings.Default.PriorityFolders == null))
             {
                 var items = DuplicateDetector.Properties.Settings.Default.PriorityFolders;
-                foreach(string item in items)
+                foreach (string item in items)
                 {
                     lstPriorityFolders.Items.Add(item);
                 }
@@ -112,15 +112,15 @@ namespace DuplicateDetector
         private void InitLog()
         {
             lstLog.Clear();
-            lstLog.Columns.Add("time", "Time",-2);
-            lstLog.Columns.Add("message", "Message",-2);
+            lstLog.Columns.Add("time", "Time", -2);
+            lstLog.Columns.Add("message", "Message", -2);
             lstLog.View = System.Windows.Forms.View.Details;
         }
 
         private void InitTreeView()
         {
             treeViewResult.Nodes.Clear();
-            
+
         }
 
         private void LogEvent(string eventDescription, EventType evetType = EventType.Message)
@@ -131,17 +131,17 @@ namespace DuplicateDetector
             switch (evetType)
             {
                 case EventType.Warring:
-                    itemColor=Color.Purple;
+                    itemColor = Color.Purple;
                     break;
                 case EventType.Error:
-                    itemColor=Color.Red;
+                    itemColor = Color.Red;
                     break;
                 default:
                     break;
             }
-
             item.ForeColor = itemColor;
             lstLog.Items[lstLog.Items.Count - 1].EnsureVisible();
+            Application.DoEvents();
         }
 
         private void btnSelectFolderToScan_Click(object sender, EventArgs e)
@@ -151,7 +151,7 @@ namespace DuplicateDetector
                 textFolderToScan.Text = selectFolderDialog.SelectedPath;
             }
         }
-              
+
 
         private void btnRemovePriorityItem_Click(object sender, EventArgs e)
         {
@@ -181,9 +181,10 @@ namespace DuplicateDetector
 
             if (!_analyzer.IsRunning)
             {
-                
+
                 SaveSettings();
                 treeViewResult.Nodes.Clear();
+                lstLog.Items.Clear();
                 btnStartScan.Image = DuplicateDetector.Properties.Resources.media_stop_red;
                 btnStartScan.ToolTipText = "Stop scan";
                 Application.DoEvents();
@@ -204,7 +205,8 @@ namespace DuplicateDetector
             var items = _analyzer.GetResult();
             foreach (var item in items)
             {
-                TreeNode fileNode =  treeViewResult.Nodes.Add(item.GetFullPath()+string.Format("------{0} duplicates",item.SameFiles.Count()));
+                TreeNode fileNode = treeViewResult.Nodes.Add(item.GetFullPath() + string.Format("------{0} duplicates", item.SameFiles.Count()));
+                
                 fileNode.Tag = item.GetFullPath();
                 foreach (var sameFile in item.SameFiles)
                 {
@@ -221,7 +223,10 @@ namespace DuplicateDetector
             string fileName = e.Node.Tag.ToString();
             if (IsImageFile(fileName))
             {
-                pctPreview.Image = Image.FromFile(fileName);
+                using (FileStream stream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+                {
+                    pctPreview.Image  = Image.FromStream(stream);
+                }
             }
             else
             {
@@ -269,7 +274,7 @@ namespace DuplicateDetector
         private void tlOpenFolder_Click(object sender, EventArgs e)
         {
             string path = new FileInfo(treeViewResult.SelectedNode.Tag.ToString()).DirectoryName;
-            if (Directory.Exists(path));
+            if (Directory.Exists(path))
             {
                 Process.Start(path);
             }
@@ -282,14 +287,153 @@ namespace DuplicateDetector
 
         private void tlOpenFile_Click(object sender, EventArgs e)
         {
-            
-            if (File.Exists(treeViewResult.SelectedNode.Tag.ToString()));
+
+            if (File.Exists(treeViewResult.SelectedNode.Tag.ToString()))
             {
                 Process.Start(treeViewResult.SelectedNode.Tag.ToString());
             }
         }
 
+        private void btnMoveFiles_Click(object sender, EventArgs e)
+        {
+            ArchiveSelectedFiles();
+        }
+
+        private void ArchiveSelectedFiles()
+        {
+            //TODO: Messy delete nodes idea..stupid treeview has no hide node methods..:)
+            List<TreeNode> nodesToRemove = new List<TreeNode>();
+            if (Directory.Exists(textFolderForMoving.Text))
+            {
+                foreach (TreeNode item in treeViewResult.Nodes)
+                {
+                    if (item.Nodes.Count > 0)
+                    {
+                        foreach (TreeNode childNode in item.Nodes)
+                        {
+                            if (childNode.Checked)
+                            {
+                                if (ArchiveFile(childNode.Tag.ToString()))
+                                {
+                                    nodesToRemove.Add(childNode);
+                                }
+                            }
+                        }
+                    }
+                    if (item.Checked)
+                    {
+                        if (ArchiveFile(item.Tag.ToString()))
+                        {
+                            nodesToRemove.Add(item);
+                        }
+                    }
+                }
+
+                foreach (TreeNode node in nodesToRemove)
+                {
+                    SmartRemoveNode(node);
+                }
+            }
+            else
+            {
+                MessageBox.Show(string.Format("Folder {0} doesn't exists!", textFolderForMoving.Text), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void tlMove_Click(object sender, EventArgs e)
+        {
+            TreeNode node = treeViewResult.SelectedNode;
+            
+            if (MoveFile(node.Tag.ToString(), textFolderForMoving.Text))
+            {
+                SmartRemoveNode(node);
+            }
+        }
+
         
+        private bool ArchiveFile(string file)
+        {
+            bool retValue = false;
+            
+
+            if (radioDelete.Checked)
+            {
+                retValue = DeleteFile(file);
+            }
+            else
+            {
+                retValue = MoveFile(file, textFolderForMoving.Text);
+            }
+            return retValue;
+        }
+
+        private bool DeleteFile(string fileName)
+        {
+            bool retValue = false;
+            if (File.Exists(fileName))
+            {
+                System.IO.File.Delete(fileName);
+                LogEvent(string.Format("File {0}  deleted.", fileName));
+                retValue = true;
+            }
+            else
+            {
+                MessageBox.Show(string.Format("File {0} doesn't exists!", fileName), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            return retValue;
+        }
+
+        private bool MoveFile(string file, string destinationFolder)
+        {
+            bool retValue = false;
+
+            FileInfo fileInfo = new FileInfo(file);
+
+            string fullName = fileInfo.FullName;
+            string fileName = fileInfo.Name;
+            string newPath = Path.Combine(destinationFolder, fileName);
+            
+            fileInfo = null;
+
+            if (Directory.Exists(textFolderForMoving.Text))
+            {
+                if (File.Exists(newPath))
+                {
+                    newPath = string.Format("{0}_{1}", newPath, DateTime.Now.ToString("yyyyMMdd_HHmmss_fff"));
+                }
+                System.IO.File.Move(fullName, newPath);
+                LogEvent(string.Format("File {0} moved to {1}.", fullName, newPath));
+                retValue = true;
+            }
+            else
+            {
+                MessageBox.Show(string.Format("Folder {0} doesn't exists!", destinationFolder), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            return retValue;
+        }
+
+        private void tlDelete_Click(object sender, EventArgs e)
+        {
+            TreeNode node = treeViewResult.SelectedNode;
+            if (DeleteFile(node.Tag.ToString()))
+            {
+                SmartRemoveNode(node);
+            }
+
+        }
+
+        private void SmartRemoveNode(TreeNode node)
+        {
+            if (node.Parent.Nodes.Count == 1)
+            {
+                treeViewResult.Nodes.Remove(node.Parent);
+            }
+            else
+            {
+                treeViewResult.Nodes.Remove(node);
+            }
+        }
     }
 }
 
