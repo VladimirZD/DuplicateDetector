@@ -24,7 +24,8 @@ namespace DuplicateDetector
             InitLog();
             InitTreeView();
             LoadSettings();
-            RefreshPriorityItemsButtons();
+            lowPriorityFolders.Description = "Low Priority folders (if duplicate images found copies in this folder will be selected for removal)";
+            foldersToIgnore.Description = "Ignore folders (don't scan and don't remove files)";
             InitAnalyzer();
             UpdateToolbar();
             LogEvent("Program started");
@@ -86,13 +87,15 @@ namespace DuplicateDetector
                 radioDelete.Checked = (Properties.Settings.Default.SelectedFilesAction == "D") ? true : false;
                 radioMove.Checked = (Properties.Settings.Default.SelectedFilesAction == "M") ? true : false;
             }
+
             if (!(DuplicateDetector.Properties.Settings.Default.PriorityFolders == null))
             {
-                var items = DuplicateDetector.Properties.Settings.Default.PriorityFolders;
-                foreach (string item in items)
-                {
-                    lstPriorityFolders.Items.Add(item);
-                }
+                lowPriorityFolders.SelectedItems = DuplicateDetector.Properties.Settings.Default.PriorityFolders;
+            }
+
+            if (!(DuplicateDetector.Properties.Settings.Default.IgnoreFolders == null))
+            {
+                foldersToIgnore.SelectedItems = DuplicateDetector.Properties.Settings.Default.IgnoreFolders;
             }
         }
 
@@ -101,12 +104,9 @@ namespace DuplicateDetector
             Properties.Settings.Default.FolderToScan = textFolderToScan.Text;
             Properties.Settings.Default.FolderForMoving = textFolderForMoving.Text;
             Properties.Settings.Default.SelectedFilesAction = (radioDelete.Checked) ? "D" : "M";
-            StringCollection priorityFolders = new StringCollection();
-            foreach (ListViewItem item in lstPriorityFolders.Items)
-            {
-                priorityFolders.Add(item.Text);
-            }
-            Properties.Settings.Default.PriorityFolders = priorityFolders;
+          
+            Properties.Settings.Default.PriorityFolders = lowPriorityFolders.SelectedItems;
+            Properties.Settings.Default.IgnoreFolders = foldersToIgnore.SelectedItems;
             Properties.Settings.Default.Save();
         }
         private void InitLog()
@@ -153,42 +153,18 @@ namespace DuplicateDetector
         }
 
 
-        private void btnRemovePriorityItem_Click(object sender, EventArgs e)
-        {
-            foreach (ListViewItem item in lstPriorityFolders.SelectedItems)
-            {
-                lstPriorityFolders.Items.Remove(item);
-            }
-            RefreshPriorityItemsButtons();
-        }
-
-        private void btnAddPriorityItem_Click(object sender, EventArgs e)
-        {
-            if (selectFolderDialog.ShowDialog() == DialogResult.OK)
-            {
-                lstPriorityFolders.Items.Add(selectFolderDialog.SelectedPath);
-            }
-            RefreshPriorityItemsButtons();
-        }
-
-        private void RefreshPriorityItemsButtons()
-        {
-            btnRemovePriorityItem.Enabled = (lstPriorityFolders.Items.Count != 0);
-        }
-
         private void btnStartScan_Click(object sender, EventArgs e)
         {
 
             if (!_analyzer.IsRunning)
             {
-
                 SaveSettings();
                 treeViewResult.Nodes.Clear();
                 lstLog.Items.Clear();
                 btnStartScan.Image = DuplicateDetector.Properties.Resources.media_stop_red;
                 btnStartScan.ToolTipText = "Stop scan";
                 Application.DoEvents();
-                _analyzer.StartScan(textFolderToScan.Text, Properties.Settings.Default.PriorityFolders);
+                _analyzer.StartScan(textFolderToScan.Text, Properties.Settings.Default.PriorityFolders, Properties.Settings.Default.IgnoreFolders);
                 btnStartScan.Image = DuplicateDetector.Properties.Resources.media_play_green;
                 btnStartScan.ToolTipText = "Start scan";
 

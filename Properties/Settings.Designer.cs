@@ -69,5 +69,16 @@ namespace DuplicateDetector.Properties {
                 this["SelectedFilesAction"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection IgnoreFolders {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["IgnoreFolders"]));
+            }
+            set {
+                this["IgnoreFolders"] = value;
+            }
+        }
     }
 }

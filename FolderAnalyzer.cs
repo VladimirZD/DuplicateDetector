@@ -35,11 +35,13 @@ namespace DuplicateDetector
         public FolderAnalyzer()
         {
             _files = new List<MyFile>();
+            this.IgnoreFolders = new StringCollection();
         }
 
         public bool IsRunning { get; set; }
         public string FolderToScan { get; set; }
         public StringCollection PriorityFolders { get; set; }
+        public StringCollection IgnoreFolders{ get; set; }
         public bool CancelInProgress { get; set; }
 
         public List<MyFile> GetResult()
@@ -92,12 +94,13 @@ namespace DuplicateDetector
         }
 
 
-        public bool StartScan(string folder, StringCollection priorityFolders)
+        public bool StartScan(string folder, StringCollection priorityFolders, StringCollection ignoreFolders)
         {
             DateTime startTime = DateTime.Now;
             bool retValue = false;
             this.FolderToScan = folder;
             this.PriorityFolders = priorityFolders;
+            this.IgnoreFolders = ignoreFolders;
             _files.Clear();
             _processedFiles.Clear();
             if (ValidateFolders())
@@ -199,9 +202,20 @@ namespace DuplicateDetector
         {
             try
             {
-                DirectoryInfo dirInfo = new DirectoryInfo(folderToScan);
+                DirectoryInfo dirInfo =null;
+                StringCollection foldersToIgnore = new StringCollection();
+                foreach (var item in IgnoreFolders)
+                {
+                    foldersToIgnore.Add(item);
+                    dirInfo = new DirectoryInfo(item);
+                    var items = dirInfo.EnumerateDirectories("*.*",SearchOption.AllDirectories);
+                    foldersToIgnore.AddRange(items.Select(f => f.FullName).ToArray<string>());
+                }
+                
+                dirInfo = new DirectoryInfo(folderToScan);
+                
                 var result = from file in dirInfo.EnumerateFiles("*.*", SearchOption.AllDirectories)
-                             where !file.Attributes.HasFlag(FileAttributes.System)
+                             where (!file.Attributes.HasFlag(FileAttributes.System) && !foldersToIgnore.Contains(file.DirectoryName))
                              select new MyFile
                                  (
                                     file.Name, 
