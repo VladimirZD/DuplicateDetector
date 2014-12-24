@@ -176,7 +176,7 @@ namespace DuplicateDetector
                     originalFile = fileGroup.Where(item => !item.IsInLowPriorityFolder).FirstOrDefault();
                     if (originalFile == null)
                     {
-                        originalFile = fileGroup.OrderByDescending(item => item.DateModified).FirstOrDefault();
+                        originalFile = fileGroup.OrderBy(item => item.DateModified).FirstOrDefault();
                     }
                     fileGroup.Remove(originalFile);
                     if (fileGroup.Count > 0)
